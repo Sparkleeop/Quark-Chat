@@ -126,6 +126,5 @@ The project emphasizes transparency and direct control over abstraction-heavy ap
 ## License
 
 This project is provided under the MIT License for educational and experimental use.
-
-> **Note**  
-> This README was generated with AI assistance.
+  
+> **NOTE** This README was generated with AI assistance.
