@@ -28,7 +28,6 @@ SERVER_ASCII = f"""{RED}
 {RESET}
 """
 
-# ---------- logging ----------
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 log_file = open(f"logs/chat_{timestamp}.log", "a", encoding="utf-8")
 
@@ -41,12 +40,11 @@ def log(msg):
 def cleanup():
     log_file.close()
 
-# ---------- server ----------
 server = socket.socket()
 server.bind((HOST, PORT))
 server.listen()
 
-clients = {}      # conn -> (username, color)
+clients = {}
 usernames = set()
 chat_history = []
 total_messages = 0
@@ -58,7 +56,6 @@ print(SERVER_ASCII)
 print(f"{GREEN}Server running on {HOST}:{PORT}{RESET}")
 log("Server started")
 
-# ---------- helpers ----------
 def broadcast(message, exclude=None):
     with lock:
         conns = list(clients.keys())
@@ -85,7 +82,6 @@ def get_conn_by_username(name):
                 return conn
     return None
 
-# ---------- client handler ----------
 def handle_client(conn, addr):
     global total_messages
 
@@ -123,7 +119,9 @@ def handle_client(conn, addr):
                 send_history(conn)
                 continue
 
-            # ---------- PRIVATE MESSAGE ----------
+            if msg == "/shrug":
+                msg = "¯\\_(ツ)_/¯"
+
             if msg.startswith("/pm "):
                 parts = msg.split(" ", 2)
                 if len(parts) < 3:
@@ -149,7 +147,6 @@ def handle_client(conn, addr):
                 log(f"PM {sender_name} -> {target_name}: {private_msg}")
                 continue
 
-            # ---------- NORMAL MESSAGE ----------
             total_messages += 1
             formatted = f"{color}{username}{RESET}: {msg}"
             chat_history.append(formatted)
@@ -171,7 +168,6 @@ def handle_client(conn, addr):
         log(f"{username} left")
         conn.close()
 
-# ---------- threads ----------
 def accept_clients():
     while True:
         conn, addr = server.accept()
